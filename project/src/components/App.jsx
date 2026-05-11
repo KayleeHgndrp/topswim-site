@@ -24,6 +24,7 @@ import {
   TweakRadio,
 } from "./tweaks-panel.jsx";
 import { btn } from "@/lib/buttons";
+import { PhoneFab } from "./PhoneFab.jsx";
 
 export default function App() {
   const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
@@ -189,6 +190,8 @@ export default function App() {
           }}
         />
       </TweaksPanel>
+
+      <PhoneFab />
     </div>
   );
 }

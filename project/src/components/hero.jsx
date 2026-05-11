@@ -9,10 +9,13 @@ function HeroEditorial({ lang, openSignup }) {
   const h = T.hero[lang];
   const c = T.cta[lang];
   return (
-    <section data-screen-label="01 Hero" className="px-7 py-8 max-[760px]:px-[18px]">
-      <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-sm bg-ink text-white">
+    <section
+      data-screen-label="01 Hero"
+      className="px-7 py-8 max-[760px]:px-[18px] max-md:px-0 max-md:py-0"
+    >
+      <div className="relative mx-auto max-w-[1440px] overflow-hidden rounded-sm bg-ink text-white max-md:rounded-none">
         <div className="grid min-h-[78vh] grid-cols-1 md:grid-cols-[1.05fr_1fr]">
-          <div className="relative z-[2] flex flex-col justify-between px-6 py-9 md:px-14 md:pb-9 md:pt-14">
+          <div className="relative z-[2] order-2 flex flex-col justify-between px-6 py-9 md:order-1 md:px-14 md:pb-9 md:pt-14">
             <div className="font-mono text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
               {h.eyebrow}
             </div>
@@ -36,14 +39,15 @@ function HeroEditorial({ lang, openSignup }) {
             </div>
             <div />
           </div>
-          <div className="relative min-h-[480px]">
+          <div className="relative order-1 min-h-[52vh] w-full md:order-2 md:min-h-[480px]">
             <Photo
               scene="underwater"
               tag="LIVE · IJBURG"
               idx="01 / 03"
               coords="52.3589° N · 4.9990° E"
               depth="WATER 16°C"
-              className="absolute inset-0 h-full rounded-none"
+              height="100%"
+              className="absolute inset-0 h-full min-h-full w-full rounded-none md:rounded-none"
             />
           </div>
         </div>
@@ -136,7 +140,7 @@ function HeroSplit({ lang, openSignup }) {
   return (
     <section className="relative min-h-[88vh] p-0" data-screen-label="01 Hero">
       <div className="grid min-h-[88vh] grid-cols-1 md:grid-cols-2">
-        <div className="flex flex-col justify-between border-hairline px-6 py-12 md:border-r md:px-14 md:py-20">
+        <div className="order-2 flex flex-col justify-between border-hairline px-6 py-12 md:order-1 md:border-r md:px-14 md:py-20">
           <div className="flex items-center gap-3.5 text-[11px] text-muted">
             <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em]">
               {h.eyebrow}
@@ -172,7 +176,7 @@ function HeroSplit({ lang, openSignup }) {
             </div>
           </div>
         </div>
-        <div className="relative min-h-[60vh] bg-paper-2 p-6 md:min-h-0">
+        <div className="relative order-1 min-h-[58vh] w-full bg-paper-2 md:order-2 md:min-h-0 md:p-6">
           <Photo
             scene="underwater"
             tag="LIVE FEED"
@@ -180,7 +184,7 @@ function HeroSplit({ lang, openSignup }) {
             coords="SLOTERPLAS · 52.3631° N"
             depth="DEPTH 4.2m"
             height="100%"
-            className="h-full rounded-lg"
+            className="h-full min-h-full w-full rounded-none md:rounded-lg"
           />
         </div>
       </div>
@@ -194,14 +198,15 @@ function HeroOverlay({ lang, openSignup }) {
   return (
     <section
       data-screen-label="01 Hero"
-      className="hero-overlay relative min-h-[640px] h-[88vh] overflow-hidden bg-[#06152b] text-white max-md:h-auto max-md:min-h-[560px] max-md:py-8"
+      className="hero-overlay relative h-[88vh] min-h-[640px] overflow-hidden bg-[#06152b] text-white max-md:h-[100dvh] max-md:min-h-[100dvh]"
     >
       <Photo
         scene="underwater"
         src="assets/hero-swimmers.png"
-        className="absolute inset-0 h-full rounded-none"
+        height="100%"
+        className="absolute inset-0 z-0 h-full min-h-full w-full rounded-none [&_img]:min-h-full"
       />
-      <div className="relative z-[2] mx-auto flex h-full max-w-[1440px] flex-col justify-end px-7 pb-8 pt-20 max-md:px-[18px] max-md:pb-8 max-md:pt-20">
+      <div className="relative z-[2] mx-auto flex h-full min-h-0 max-w-[1440px] flex-col justify-end px-7 pb-8 pt-20 max-md:min-h-[100dvh] max-md:px-[18px] max-md:pb-10 max-md:pt-28">
         <div className="max-w-[920px] [text-shadow:0_2px_30px_rgba(6,15,30,0.85),0_1px_2px_rgba(6,15,30,0.6)]">
           <div className="mb-6 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/85">
             {h.eyebrow}

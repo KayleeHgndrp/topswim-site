@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { T, DAYS } from "./data.jsx";
 import { Photo } from "./photo.jsx";
 import { btn, btnGhost } from "@/lib/buttons";
@@ -97,7 +98,7 @@ export function Courses({ lang, openSignup }) {
                 {c.basisLede}
               </p>
             </div>
-            <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 text-sm">
+            <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 text-sm md:grid-cols-2">
               {c.basisFeats.map((f, i) => (
                 <li key={i} className="flex items-baseline gap-2">
                   <span className="font-mono text-[10px] text-accent">
@@ -145,7 +146,7 @@ export function Courses({ lang, openSignup }) {
                 {c.hbfsLede}
               </p>
             </div>
-            <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 text-sm">
+            <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 text-sm md:grid-cols-2">
               {c.hbfsFeats.map((f, i) => (
                 <li key={i} className="flex items-baseline gap-2">
                   <span className="font-mono text-[10px] text-accent">
@@ -372,7 +373,20 @@ export function Coach({ lang }) {
           <span className={monoEyebrow}>
             § 06 — {c.label}
           </span>
-          <h2 className={`${displayH2} mb-8 mt-2.5`}>{c.title}</h2>
+          <h2 className={`${displayH2} mb-5 mt-2.5`}>{c.title}</h2>
+
+          <div className="mb-8">
+            <Image
+              src="/assets/ironman-certified-coach.png"
+              alt="IRONMAN Certified Coach"
+              width={140}
+              height={52}
+              className="h-auto max-w-[120px] object-contain object-left sm:max-w-[140px]"
+              sizes="(max-width: 640px) 120px, 140px"
+              loading="lazy"
+            />
+          </div>
+
           {c.bio.map((p, i) => (
             <p
               key={i}
