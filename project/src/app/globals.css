@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: #0a1f3d;
+    --ink-2: #13345e;
+    --paper: #ffffff;
+    --paper-2: #f5f3ee;
+    --line: #0a1f3d;
+    --accent: #0a1f3d;
+    --accent-2: #c9a96e;
+    --water: #0a1f3d;
+    --muted: rgba(10, 31, 61, 0.55);
+    --hairline: rgba(10, 31, 61, 0.14);
+  }
+
+  body.dark {
+    --ink: #f4ede0;
+    --ink-2: #ebe2d0;
+    --paper: #0b1c2c;
+    --paper-2: #0e2336;
+    --line: #f4ede0;
+    --hairline: rgba(244, 237, 224, 0.22);
+    --muted: rgba(244, 237, 224, 0.62);
+  }
+
+  *,
+  *::before,
+  *::after {
+    @apply box-border;
+  }
+
+  html,
+  body {
+    @apply m-0 min-h-full overflow-x-hidden bg-paper font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-ink text-white;
+  }
+}
+
+/* Photo placeholders + brand dot — complex gradients / pseudo */
+@layer components {
+  .brand-mark {
+    @apply relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-ink;
+  }
+  .brand-mark::before {
+    content: "";
+    @apply absolute inset-0;
+    background: repeating-linear-gradient(
+      135deg,
+      transparent 0 4px,
+      rgba(255, 255, 255, 0.18) 4px 5px
+    );
+  }
+  .brand-mark::after {
+    content: "";
+    @apply absolute rounded-full bg-white;
+    inset: 7px;
+  }
+
+  .photo {
+    @apply relative overflow-hidden rounded-md bg-ink text-paper;
+  }
+  .photo .ph-grad {
+    @apply absolute inset-0;
+    background:
+      radial-gradient(120% 80% at 30% 10%, rgba(255, 255, 255, 0.22), transparent 60%),
+      radial-gradient(140% 100% at 80% 100%, rgba(10, 31, 61, 0.6), transparent 55%),
+      linear-gradient(180deg, #0a1f3d 0%, #13345e 60%, #2a5a8a 100%);
+  }
+  .photo .ph-grain {
+    @apply absolute inset-0 opacity-[0.18] mix-blend-overlay;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.06) 0 1px, transparent 1px 3px);
+  }
+  .photo .ph-water {
+    @apply absolute bottom-0 left-0 right-0 h-[55%] origin-bottom animate-wave;
+    background: repeating-linear-gradient(
+      transparent 0 8px,
+      rgba(244, 237, 224, 0.06) 8px 9px
+    );
+    mask: linear-gradient(180deg, transparent, #000 30%);
+  }
+  .ph-tag {
+    @apply absolute flex items-center gap-1.5 rounded border border-[rgba(244,237,224,0.25)] bg-[rgba(11,28,44,0.55)] px-2 py-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.06em] text-paper backdrop-blur-sm;
+  }
+  .ph-tag .blink {
+    @apply h-1.5 w-1.5 animate-blink rounded-full bg-white;
+  }
+
+  .hero-overlay .photo {
+    @apply absolute inset-0 h-full rounded-none;
+  }
+  .hero-overlay .photo .ph-grad {
+    background:
+      radial-gradient(80% 60% at 30% 20%, rgba(255, 255, 255, 0.18), transparent 60%),
+      linear-gradient(180deg, rgba(6, 15, 30, 0.45) 0%, rgba(6, 15, 30, 0.15) 35%, rgba(6, 15, 30, 0.7) 100%),
+      linear-gradient(180deg, #06152b 0%, #0a1f3d 50%, #1a4475 100%);
+  }
+}
