@@ -1,0 +1,10 @@
+{
+  "name": "topswim-site",
+  "private": true,
+  "workspaces": ["project"],
+  "scripts": {
+    "dev": "npm run dev -w project",
+    "build": "npm run build -w project",
+    "start": "npm run start -w project"
+  }
+}
