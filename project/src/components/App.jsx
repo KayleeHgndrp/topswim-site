@@ -41,9 +41,19 @@ export default function App() {
   const c = T.cta[lang];
   const navItems = T.nav[lang];
 
+  const heroIsOverlay = t.heroVariant === "overlay";
+
   return (
     <div>
-      <header className="sticky top-0 z-40 border-b border-hairline bg-paper">
+      <div
+        id="top"
+        className={
+          heroIsOverlay
+            ? "flex h-[100dvh] max-h-[100dvh] flex-col overflow-hidden"
+            : undefined
+        }
+      >
+      <header className="sticky top-0 z-40 shrink-0 border-b border-hairline bg-paper">
         <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-7 md:h-[60px] md:px-7 [@media(max-width:760px)]:px-[18px]">
           <a
             href="#top"
@@ -119,6 +129,7 @@ export default function App() {
       </header>
 
       <Hero variant={t.heroVariant} lang={lang} openSignup={openSignup} />
+      </div>
 
       <Marquee lang={lang} />
 
