@@ -206,7 +206,7 @@ function HeroOverlay({ lang, openSignup }) {
         height="100%"
         className="absolute inset-0 z-0 h-full min-h-full w-full rounded-none [&_img]:min-h-full"
       />
-      <div className="relative z-[2] mx-auto flex min-h-0 flex-1 max-w-[1440px] flex-col justify-end px-7 pb-8 pt-20 max-md:px-[18px] max-md:pb-10 max-md:pt-28">
+      <div className="relative z-[2] mx-auto flex min-h-0 flex-1 max-w-[1440px] flex-col justify-end px-7 pb-8 pt-20 max-md:px-[18px] max-md:pb-[calc(3.25rem+env(safe-area-inset-bottom,0px))] max-md:pt-20">
         <div className="max-w-[920px] [text-shadow:0_2px_30px_rgba(6,15,30,0.85),0_1px_2px_rgba(6,15,30,0.6)]">
           <div className="mb-6 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-white/85">
             {h.eyebrow}
