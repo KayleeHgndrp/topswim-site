@@ -1,0 +1,1508 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Topswim — Open Water Coaching Amsterdam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  :root{
+    --ink:#0a1f3d;
+    --ink-2:#13345e;
+    --paper:#ffffff;
+    --paper-2:#f5f3ee;
+    --line:#0a1f3d;
+    --accent:#0a1f3d;
+    --accent-2:#c9a96e;
+    --water:#0a1f3d;
+    --muted:rgba(10,31,61,.55);
+    --hairline:rgba(10,31,61,.14);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+    font-family:"Inter",ui-sans-serif,system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  body.dark{
+    --ink:#f4ede0;--ink-2:#ebe2d0;--paper:#0b1c2c;--paper-2:#0e2336;
+    --line:#f4ede0;--hairline:rgba(244,237,224,.22);--muted:rgba(244,237,224,.62);
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-feature-settings:"ss01","cv02";letter-spacing:.01em}
+  .serif{font-family:"Fraunces",ui-serif,Georgia,serif;font-variation-settings:"opsz" 144,"SOFT" 30;letter-spacing:-.02em}
+  .uc{text-transform:uppercase;letter-spacing:.14em}
+  ::selection{background:var(--ink);color:#fff}
+  .serif{font-weight:300}
+
+  /* layout */
+  .shell{max-width:1440px;margin:0 auto;padding:0 28px;position:relative}
+  @media(max-width:760px){.shell{padding:0 18px}}
+  .row{display:flex}.col{display:flex;flex-direction:column}
+  .hairline{border-top:1px solid var(--hairline)}
+  .hairline-b{border-bottom:1px solid var(--hairline)}
+
+  /* Top bar */
+  .topbar{position:sticky;top:0;z-index:40;background:var(--paper);border-bottom:1px solid var(--hairline)}
+  .topbar-inner{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
+  .brand-mark{width:28px;height:28px;border-radius:50%;background:var(--ink);position:relative;flex:none;overflow:hidden}
+  .brand-mark::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,.18) 4px 5px)}
+  .brand-mark::after{content:"";position:absolute;inset:7px;border-radius:50%;background:#fff}
+  .brand-name{font-size:18px}
+  .nav{display:flex;align-items:center;gap:22px}
+  .nav a{color:var(--ink);text-decoration:none;font-size:13px;letter-spacing:.02em}
+  .nav a:hover{color:var(--accent)}
+  .lang{display:inline-flex;align-items:center;border:1px solid var(--hairline);border-radius:999px;padding:2px;font-size:11px}
+  .lang button{background:transparent;border:0;color:var(--ink);padding:4px 10px;border-radius:999px;cursor:pointer;font:inherit}
+  .lang button.on{background:var(--ink);color:var(--paper)}
+
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:2px;border:1px solid var(--ink);
+    background:var(--ink);color:#fff;text-decoration:none;font:500 12px/1 "Inter",sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:transform .15s ease,background .15s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.accent{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn.accent:hover{background:#13345e}
+  .btn.light{background:#fff;color:var(--ink);border-color:#fff}
+  .btn.light:hover{background:#f5f3ee}
+  .btn .arr{display:inline-block;transition:transform .2s ease}
+  .btn:hover .arr{transform:translateX(3px)}
+
+  /* eyebrow row */
+  .meta{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--muted)}
+  .dot{width:5px;height:5px;border-radius:50%;background:var(--ink);opacity:.45}
+
+  /* photo placeholders */
+  .photo{position:relative;background:var(--ink);overflow:hidden;border-radius:6px;color:var(--paper)}
+  .photo .ph-grad{position:absolute;inset:0;
+    background:
+      radial-gradient(120% 80% at 30% 10%,rgba(255,255,255,.22),transparent 60%),
+      radial-gradient(140% 100% at 80% 100%,rgba(10,31,61,.6),transparent 55%),
+      linear-gradient(180deg,#0a1f3d 0%,#13345e 60%,#2a5a8a 100%);}
+  .photo .ph-grain{position:absolute;inset:0;opacity:.18;mix-blend-mode:overlay;
+    background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px),
+      repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 1px,transparent 1px 3px)}
+  .photo .ph-water{position:absolute;inset:auto 0 0 0;height:55%;
+    background:repeating-linear-gradient(transparent 0 8px,rgba(244,237,224,.06) 8px 9px);
+    mask:linear-gradient(180deg,transparent,#000 30%);
+    transform-origin:bottom;animation:wave 14s linear infinite}
+  @keyframes wave{0%{transform:translateY(0)}50%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+  .ph-tag{position:absolute;display:flex;gap:6px;align-items:center;font:500 10px/1 "JetBrains Mono",monospace;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--paper);
+    background:rgba(11,28,44,.55);backdrop-filter:blur(6px);padding:6px 9px;border-radius:4px;border:1px solid rgba(244,237,224,.25)}
+  .ph-tag .blink{width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.6);animation:blink 1.6s ease-in-out infinite}
+  @keyframes blink{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}50%{box-shadow:0 0 0 6px rgba(255,255,255,0)}}
+
+  /* card */
+  .card{background:var(--paper-2);border-radius:2px;padding:24px}
+  body.dark .card{background:#102a3f}
+
+  /* typography helpers */
+  .display{font-family:"Fraunces",serif;font-variation-settings:"opsz" 144;font-weight:400;line-height:.92;letter-spacing:-.035em}
+  h1.display{font-size:clamp(56px,9vw,148px);margin:0}
+  h2.display{font-size:clamp(40px,5.5vw,84px);margin:0;line-height:.94}
+  h3.display{font-size:clamp(26px,3vw,40px);margin:0;line-height:1}
+
+  /* signup modal */
+  .modal-back{position:fixed;inset:0;background:rgba(11,28,44,.55);backdrop-filter:blur(6px);z-index:80;display:flex;align-items:flex-end;justify-content:center;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @media(min-width:760px){.modal-back{align-items:center}}
+  .modal{background:var(--paper);width:100%;max-width:780px;max-height:92vh;overflow:hidden;border-radius:4px 4px 0 0;display:flex;flex-direction:column;animation:slide .35s cubic-bezier(.2,.8,.2,1)}
+  @media(min-width:760px){.modal{border-radius:4px}}
+  @keyframes slide{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+
+  .input,.select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--hairline);padding:14px 0 12px;font:500 17px/1.2 "Inter",sans-serif;color:var(--ink);outline:none}
+  .input:focus,.select:focus{border-color:var(--accent)}
+  .input::placeholder{color:var(--muted)}
+  label.fl{font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px}
+
+  /* radio cards */
+  .opt{border:1px solid var(--hairline);border-radius:2px;padding:18px;cursor:pointer;transition:all .15s ease;background:transparent;text-align:left;width:100%;color:var(--ink);display:flex;gap:14px;align-items:flex-start;font:inherit}
+  .opt:hover{border-color:var(--ink)}
+  .opt.on{border-color:var(--ink);background:rgba(10,31,61,.04);box-shadow:0 0 0 3px rgba(10,31,61,.08)}
+  .opt-bullet{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--ink);flex:none;margin-top:3px;display:grid;place-items:center}
+  .opt.on .opt-bullet::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--ink)}
+
+  /* pill */
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid var(--hairline);font:500 11px/1 "JetBrains Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+  .pill.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .pill.accent{background:var(--accent-2);color:var(--ink);border-color:var(--accent-2)}
+
+  /* marquee */
+  .marquee{overflow:hidden;background:var(--ink);color:#fff}
+  .marquee-track{display:flex;gap:36px;padding:18px 0;white-space:nowrap;animation:scroll 50s linear infinite;font-family:"Fraunces",serif;font-size:22px;font-weight:300;font-style:italic;letter-spacing:-.01em}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .marquee-track span{display:inline-flex;align-items:center;gap:18px}
+  .marquee-track .star{color:var(--accent-2);font-style:normal;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.2em}
+
+  /* schedule grid */
+  .day-card{background:var(--paper-2);border-radius:2px;overflow:hidden;display:flex;flex-direction:column;min-height:380px;position:relative}
+  body.dark .day-card{background:#0e2336}
+
+  /* misc */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+  @media(max-width:880px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  .underline-link{color:var(--ink);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+  .underline-link:hover{color:var(--accent)}
+
+  details summary{list-style:none;cursor:pointer}
+  details summary::-webkit-details-marker{display:none}
+
+  /* hero variants */
+  .hero{position:relative;min-height:88vh}
+  .hero-marquee-words{font-family:"Fraunces",serif;font-size:clamp(80px,14vw,220px);line-height:.9;font-weight:300;letter-spacing:-.04em;font-variation-settings:"opsz" 144}
+
+  /* RESPONSIVE — global */
+  @media(max-width:880px){
+    .topbar-inner{height:56px}
+    .nav{gap:14px}
+    .nav a{display:none}
+    .lang{font-size:10px}
+    .lang button{padding:3px 8px}
+    .btn{padding:12px 16px;font-size:11px;letter-spacing:.1em}
+    .btn .arr{display:none}
+    .grid-2,.grid-3{grid-template-columns:1fr !important;gap:20px}
+    .hero-overlay{min-height:560px;height:auto;padding-top:32px;padding-bottom:32px}
+    .hero-overlay-inner{padding:80px 18px 32px !important}
+    .marquee-track{font-size:16px;padding:14px 0}
+    .modal{max-height:96vh}
+    .modal .opt{padding:14px}
+  }
+  @media(max-width:560px){
+    .nav .lang{display:none}
+    .modal{border-radius:4px 4px 0 0 !important}
+  }
+
+  /* hero overlay variant */
+  .hero-overlay{position:relative;height:88vh;min-height:640px;color:#fff;overflow:hidden;background:#06152b}
+  .hero-overlay .photo{position:absolute;inset:0;height:100%;border-radius:0}
+  .hero-overlay .photo .ph-grad{background:
+    radial-gradient(80% 60% at 30% 20%,rgba(255,255,255,.18),transparent 60%),
+    linear-gradient(180deg,rgba(6,15,30,.45) 0%,rgba(6,15,30,.15) 35%,rgba(6,15,30,.7) 100%),
+    linear-gradient(180deg,#06152b 0%,#0a1f3d 50%,#1a4475 100%)}
+  .hero-overlay-inner{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:64px 28px;max-width:1440px;margin:0 auto}
+  .hero-overlay h1{color:#fff}
+  .hero-overlay .nav-row{position:absolute;top:24px;left:0;right:0;z-index:3}
+
+  /* numbered grid */
+  .numgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--hairline)}
+  .numgrid > div{padding:32px 24px;border-bottom:1px solid var(--hairline);border-right:1px solid var(--hairline);display:flex;flex-direction:column;gap:10px;min-height:200px;background:var(--paper)}
+  .numgrid > div:nth-child(3n){border-right:0}
+  @media(max-width:880px){.numgrid{grid-template-columns:1fr 1fr}.numgrid > div:nth-child(3n){border-right:1px solid var(--hairline)}.numgrid > div:nth-child(2n){border-right:0}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// ─── Tweaks panel ────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-field{appearance:none;width:100%;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;overflow-wrap:anywhere}
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(clampToViewport) : null;
+    if (ro) { ro.observe(document.documentElement); return () => ro.disconnect(); }
+    window.addEventListener('resize', clampToViewport);
+    return () => window.removeEventListener('resize', clampToViewport);
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel"
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" onMouseDown={(e) => e.stopPropagation()} onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ label }) {
+  return <div className="twk-sect">{label}</div>;
+}
+
+function TweakRow({ label, children }) {
+  return (
+    <div className="twk-row">
+      <div className="twk-lbl"><span>{label}</span></div>
+      {children}
+    </div>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+  const trackRef = React.useRef(null);
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    const v0 = segAt(e.clientX);
+    if (v0 !== value) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== value) onChange(v);
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown} className="twk-seg">
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+// ─── Data + i18n ─────────────────────────────────────────────────────────────
+
+const PALETTES = {
+  midnight: { name:"Midnight Water", ink:"#0a1f3d", paper:"#ffffff", paper2:"#f5f3ee", accent:"#0a1f3d", water:"#13345e" },
+  dawn:     { name:"Dawn",           ink:"#102a3f", paper:"#f6efe5", paper2:"#e6e7e3", accent:"#102a3f", water:"#7fb3c7" },
+  buoy:     { name:"Buoy",           ink:"#08172a", paper:"#f1ead7", paper2:"#e9e2cd", accent:"#08172a", water:"#0d3a55" },
+};
+
+function applyPalette(name) {
+  const p = PALETTES[name] || PALETTES.midnight;
+  const r = document.documentElement.style;
+  r.setProperty("--ink", p.ink);
+  r.setProperty("--paper", p.paper);
+  r.setProperty("--paper-2", p.paper2);
+  r.setProperty("--accent", p.accent);
+  r.setProperty("--water", p.water);
+  r.setProperty("--hairline", p.ink + "2e");
+  r.setProperty("--muted", p.ink + "9d");
+  r.setProperty("--line", p.ink);
+}
+
+const DAYS = [
+  {
+    key:"mon", day_nl:"Maandag", day_en:"Monday",
+    spot:"KNSM-Eiland", sub:"Oostelijk Havengebied",
+    coords:"52.3711° N · 4.9542° E",
+    start:"25 MEI 2026", start_en:"MAY 25 2026",
+    distance:"~1.2 km loop", depth:"3.6 m gem.", waterTemp:"16°C verwacht",
+    note_nl:"Brede instap, beschut bij oostenwind.",
+    note_en:"Wide entry, sheltered in easterly wind.",
+  },
+  {
+    key:"wed", day_nl:"Woensdag", day_en:"Wednesday",
+    spot:"Steigereiland", sub:"IJburg",
+    coords:"52.3589° N · 4.9990° E",
+    start:"27 MEI 2026", start_en:"MAY 27 2026",
+    distance:"~1.5 km open", depth:"4.2 m gem.", waterTemp:"16°C verwacht",
+    note_nl:"Strakke boeienlijn, ideaal voor navigatie.",
+    note_en:"Tight buoy line, ideal for navigation drills.",
+  },
+  {
+    key:"thu", day_nl:"Donderdag", day_en:"Thursday",
+    spot:"Sloterplas", sub:"Amsterdam West",
+    coords:"52.3631° N · 4.8316° E",
+    start:"28 MEI 2026", start_en:"MAY 28 2026",
+    distance:"~2.0 km rond", depth:"20 m max.", waterTemp:"15°C verwacht",
+    note_nl:"Diepste plas, racetempo en intervallen.",
+    note_en:"Deepest lake — race pace & intervals.",
+  },
+];
+
+const T = {
+  nav: {
+    nl: ["Cursussen","Locaties","Coach","FAQ"],
+    en: ["Courses","Locations","Coach","FAQ"],
+  },
+  cta: {
+    nl: { signup:"Aanmelden", learn:"Hoe werkt het", contact:"Stel je vraag" },
+    en: { signup:"Sign up",   learn:"How it works",  contact:"Ask a question" },
+  },
+  hero: {
+    nl: {
+      eyebrow:"Open Water Coaching · Amsterdam · Seizoen 2026",
+      title:["Vind","het ","ritme","van","het","water."],
+      lede:"Zes weken open water training met coach Michiel — drie locaties, video-analyse, en een groep die je vooruit duwt.",
+      stat:["6 trainingen","3 locaties","video-analyse","vanaf €185"],
+      seriesStart:"Start eind mei 2026",
+    },
+    en: {
+      eyebrow:"Open Water Coaching · Amsterdam · 2026 Season",
+      title:["Find","the ","rhythm","of","the","water."],
+      lede:"Six weeks of open-water training with coach Michiel — three locations, video analysis, and a group that pushes you forward.",
+      stat:["6 sessions","3 locations","video analysis","from €185"],
+      seriesStart:"Starts late May 2026",
+    },
+  },
+  courses: {
+    nl: {
+      title:"Twee series. Eén stap dieper.",
+      basisName:"Basiscursus", basisTag:"INSTAP · 6 × 1U",
+      basisLede:"De fundering. Navigatie, veiligheid, materiaal, en techniek-verbetering — afgesloten met video-analyse. Ook geschikt voor triatleten en city swim-deelnemers.",
+      basisFeats:["6 trainingen van 1 uur","Navigatie & sighting","Veiligheid & open water mindset","Materiaalcheck (wetsuit, bril)","Video-analyse op locatie","Triatlon- & city swim-ready"],
+      hbfsName:"HBFS", hbfsFull:"Harder · Better · Faster · Stronger", hbfsTag:"VERVOLG · GEVORDERD",
+      hbfsLede:"Voor wie de basis al heeft. Endurance bouwen, racetactiek slijpen, en leren versnellen wanneer het er toe doet — pelotons, boei-inhalingen, en sprint-finishes.",
+      hbfsFeats:["Endurance-blokken","Racetactiek & boei-inhalingen","Pelotonszwemmen","Sprint-finishes onder druk","Pace-werk met FTP","Wedstrijdvoorbereiding"],
+      from:"Vanaf", ondemand:"Op aanvraag", enroll:"Schrijf je in", compare:"Vergelijk de series",
+    },
+    en: {
+      title:"Two series. One step deeper.",
+      basisName:"Foundation", basisTag:"ENTRY · 6 × 1H",
+      basisLede:"The base layer. Navigation, safety, gear, and technique — closed off with video analysis. Also suited to triathletes and city-swim participants.",
+      basisFeats:["6 one-hour sessions","Navigation & sighting","Safety & open-water mindset","Gear check (wetsuit, goggles)","On-site video analysis","Triathlon & city-swim ready"],
+      hbfsName:"HBFS", hbfsFull:"Harder · Better · Faster · Stronger", hbfsTag:"ADVANCED",
+      hbfsLede:"For swimmers who have the base. Build endurance, sharpen race tactics, and learn to surge when it matters — pelotons, buoy passes, and sprint finishes.",
+      hbfsFeats:["Endurance blocks","Race tactics & buoy passes","Peloton swimming","Sprint finishes under pressure","Pace work with FTP","Race preparation"],
+      from:"From", ondemand:"On request", enroll:"Enroll", compare:"Compare the series",
+    },
+  },
+  schedule: {
+    nl: {
+      title:"Drie avonden. Drie wateren.",
+      lede:"Eén tijd, drie plassen. Je mag tot twee keer wisselen van dag of locatie binnen je cursus.",
+      time:"19:00 — 20:00", switch:"2× wisselen toegestaan", pickDay:"Kies je avond",
+    },
+    en: {
+      title:"Three evenings. Three waters.",
+      lede:"One time, three lakes. You can switch day or location up to twice within your course.",
+      time:"19:00 — 20:00", switch:"2 swaps allowed", pickDay:"Pick your evening",
+    },
+  },
+  whoFor: {
+    nl: {
+      title:"Voor wie?",
+      items:[
+        {k:"01",t:"Eerste open water",b:"Je hebt baantjes gezwommen en wil de stap naar buiten maken. Wij coachen vanaf de eerste sighting."},
+        {k:"02",t:"Triatleten",b:"Specifiek werk aan zwemstart, navigatie en uit het pak komen — alles wat in het zwembad ontbreekt."},
+        {k:"03",t:"City swim & charity",b:"Amsterdam City Swim, Swim to Fight Cancer — bouw vertrouwen voor je doel-evenement."},
+        {k:"04",t:"Race-ready zwemmers",b:"HBFS bouwt op de basis met endurance, tactiek en versnellingen. Voor wie sneller wil."},
+      ],
+    },
+    en: {
+      title:"Who is it for?",
+      items:[
+        {k:"01",t:"First-time open water",b:"You've swum laps and want to step outside. We coach from the very first sighting."},
+        {k:"02",t:"Triathletes",b:"Race-specific work — starts, sighting, exiting the wetsuit — everything the pool can't teach."},
+        {k:"03",t:"City swim & charity",b:"Amsterdam City Swim, Swim to Fight Cancer — build the confidence to finish strong."},
+        {k:"04",t:"Race-ready swimmers",b:"HBFS layers endurance, tactics and surges on top of the base. For when you want faster."},
+      ],
+    },
+  },
+  whatYouGet: {
+    nl: {
+      title:"Wat zit er in",
+      items:[
+        {k:"01",t:"Coach in het water",b:"Michiel zwemt mee, niet langs de kant. Direct feedback op tempo, ademhaling en sighting."},
+        {k:"02",t:"Video-analyse",b:"GoPro vanaf de oever én onderwater. Frame-voor-frame doornemen na de training."},
+        {k:"03",t:"Veiligheid eerst",b:"Reddingsboei, EHBO en briefing voor elke sessie. Open water gaat over voorbereiding."},
+        {k:"04",t:"Materiaal-check",b:"Wetsuit zit niet lekker? Bril beslaat? Laat het oplossen voor je een kilometer in zit."},
+        {k:"05",t:"Trainingsschema",b:"Tussen de sessies krijg je werk mee — solo of in het zwembad — om door te bouwen."},
+        {k:"06",t:"Whatsapp groep",b:"Vragen, lift-deal naar de plas, of last-minute wissels — alles loopt via één lijn."},
+      ],
+    },
+    en: {
+      title:"What you get",
+      items:[
+        {k:"01",t:"Coach in the water",b:"Michiel swims with you, not from the shore. Live feedback on pace, breathing, sighting."},
+        {k:"02",t:"Video analysis",b:"GoPro from shore and underwater. Frame-by-frame review after each session."},
+        {k:"03",t:"Safety first",b:"Rescue buoy, first-aid, briefing every session. Open water is preparation."},
+        {k:"04",t:"Gear check",b:"Wetsuit fitting off? Goggles fogging? Fix it before you log a kilometer."},
+        {k:"05",t:"Take-home work",b:"Between sessions you get drills — solo or pool — to keep building."},
+        {k:"06",t:"WhatsApp group",b:"Questions, carpooling, last-minute swaps — one line for everything."},
+      ],
+    },
+  },
+  coach: {
+    nl: {
+      label:"DE COACH", name:"Michiel",
+      title:"10 jaar open water. Eén missie.",
+      bio:[
+        "Ik coach Topswim sinds 2016. Wat begon met een handvol triatleten op het KNSM-Eiland is uitgegroeid tot drie avonden in de week — en honderden zwemmers die hun eerste plas, eerste race, of eerste 5K hebben afgetikt.",
+        "Mijn aanpak: zwem mee, kijk goed, en geef feedback waar het verschil maakt. Geen lange theorie aan de kant. Het water is de docent — ik vertaal alleen.",
+      ],
+      stats:[{v:"500+",l:"zwemmers gecoacht"},{v:"10",l:"seizoenen"},{v:"3",l:"plassen"},{v:"0",l:"saaie sessies"}],
+    },
+    en: {
+      label:"THE COACH", name:"Michiel",
+      title:"Ten years of open water. One mission.",
+      bio:[
+        "I've coached Topswim since 2016. What started with a handful of triathletes off KNSM-island has grown into three evenings a week — and hundreds of swimmers who finished their first lake, first race, or first 5K.",
+        "My approach: swim alongside, watch closely, and give feedback where it actually matters. No long talks on the bank. The water is the teacher — I just translate.",
+      ],
+      stats:[{v:"500+",l:"swimmers coached"},{v:"10",l:"seasons"},{v:"3",l:"lakes"},{v:"0",l:"boring sessions"}],
+    },
+  },
+  testimonials: {
+    nl:[
+      {q:"Eerste keer open water, en ik zwom drie weken later mijn city swim uit. De groep maakt dit.",n:"Eline V.",r:"City Swim 2025"},
+      {q:"Eindelijk iemand die in het water zegt wat er fout gaat in plaats van na afloop. Game changer voor mijn triatlon.",n:"Bas T.",r:"Triatleet"},
+      {q:"HBFS slijpt je. Ik zwom 1:32/100 op de plas — nu 1:24. Met meer plezier dan ooit.",n:"Iris P.",r:"5K open water"},
+      {q:"De video-analyse liet me iets zien wat geen coach in 15 jaar zwembad eruit had gehaald.",n:"Pim K.",r:"Masters"},
+    ],
+    en:[
+      {q:"First time in open water — three weeks later I finished the city swim. The group makes it.",n:"Eline V.",r:"City Swim 2025"},
+      {q:"Finally a coach who tells me what's going wrong while I'm in the water, not after. Game changer.",n:"Bas T.",r:"Triathlete"},
+      {q:"HBFS sharpens you. I went from 1:32/100 to 1:24 — and had more fun doing it.",n:"Iris P.",r:"5K open water"},
+      {q:"Video analysis showed me something no pool coach found in 15 years.",n:"Pim K.",r:"Masters"},
+    ],
+  },
+  faq: {
+    nl:[
+      {q:"Heb ik ervaring nodig?",a:"Niet voor open water. Wel: comfortabel 500m kunnen zwemmen in een zwembad, en geen paniek bij diep water."},
+      {q:"Wat moet ik meenemen?",a:"Wetsuit (verplicht t/m juni), open water bril, evt. zwemboei. Geen wetsuit? We helpen met huur of advies."},
+      {q:"Wat als het onweert?",a:"Veiligheid eerst — bij onweer, bliksem of slechte zicht zeggen we af. We schuiven door of geven krediet."},
+      {q:"Kan ik wisselen van dag?",a:"Ja, maximaal 2× per cursus. Geef het door in de WhatsApp en je staat op de andere lijst."},
+      {q:"Krijg ik geld terug bij blessure?",a:"Bij langdurige blessure schuiven we je door naar het volgende blok of de winterserie. We praten erover."},
+      {q:"Komt HBFS na elk Basisblok?",a:"Niet automatisch — HBFS draait twee keer per seizoen, met een instaptest. Vraag Michiel om mee te kijken."},
+    ],
+    en:[
+      {q:"Do I need experience?",a:"Not for open water. But: comfortable swimming 500m in a pool, and no panic in deep water."},
+      {q:"What do I bring?",a:"Wetsuit (required through June), open-water goggles, optional swim buoy. No wetsuit? We help with rental or advice."},
+      {q:"What if there's lightning?",a:"Safety first — we cancel for thunder, lightning or poor visibility. We reschedule or credit you."},
+      {q:"Can I swap days?",a:"Yes, up to 2× per course. Drop it in WhatsApp and you'll be on the other list."},
+      {q:"Refund for injury?",a:"For long-term injury we move you to the next block or the winter series. We'll figure it out."},
+      {q:"Does HBFS follow every Foundation block?",a:"Not automatically — HBFS runs twice per season with an entry test. Ask Michiel to take a look."},
+    ],
+  },
+  signup: {
+    nl: {
+      open:"Schrijf je in", close:"Sluiten", step:"Stap", of:"van",
+      next:"Volgende", back:"Terug", submit:"Bevestig aanmelding",
+      done:"Je bent aangemeld",
+      doneSub:"Welkom in het seizoen 2026. Michiel neemt binnen 24 uur contact op met praktische details.",
+      doneClose:"Sluiten",
+      steps:[
+        {t:"Welke serie?",s:"Begin bij de basis of stap door naar HBFS."},
+        {t:"Welke avond?",s:"Eén tijd, drie plassen. Wisselen mag later."},
+        {t:"Vertel ons over jezelf",s:"Zodat Michiel weet wie hij verwelkomt."},
+        {t:"Bevestig & aanmelden",s:"Check, en je staat op de lijst."},
+      ],
+      nameLbl:"Naam", emailLbl:"E-mail", phoneLbl:"Telefoon", levelLbl:"Niveau",
+      levels:["Eerste open water","Wat ervaring","Triatleet","Race-ready (HBFS)"],
+      goalsLbl:"Doel (optioneel)", goalsPh:"Bv. Amsterdam City Swim, Ironman 70.3, sneller worden…",
+      reviewSerie:"Serie", reviewDay:"Avond", reviewLoc:"Locatie", reviewStart:"Start",
+      total:"Totaal", consent:"Ik ga akkoord met de voorwaarden en aansprakelijkheidsverklaring.",
+    },
+    en: {
+      open:"Sign up", close:"Close", step:"Step", of:"of",
+      next:"Next", back:"Back", submit:"Confirm sign-up",
+      done:"You're signed up",
+      doneSub:"Welcome to the 2026 season. Michiel will reach out within 24 hours with the details.",
+      doneClose:"Close",
+      steps:[
+        {t:"Which series?",s:"Start at the foundation or step into HBFS."},
+        {t:"Which evening?",s:"One time, three lakes. Swaps allowed later."},
+        {t:"Tell us about you",s:"So Michiel knows who he's welcoming."},
+        {t:"Review & confirm",s:"Look it over, and you're on the list."},
+      ],
+      nameLbl:"Name", emailLbl:"Email", phoneLbl:"Phone", levelLbl:"Level",
+      levels:["First-time open water","Some experience","Triathlete","Race-ready (HBFS)"],
+      goalsLbl:"Goal (optional)", goalsPh:"E.g. Amsterdam City Swim, Ironman 70.3, get faster…",
+      reviewSerie:"Series", reviewDay:"Evening", reviewLoc:"Location", reviewStart:"Start",
+      total:"Total", consent:"I agree to the terms and the liability waiver.",
+    },
+  },
+  footer: {
+    nl:{tag:"Open water seizoen 2026.",contact:"Contact",made:"Topswim — Amsterdam · KvK 12345678"},
+    en:{tag:"Open water season 2026.",contact:"Contact",made:"Topswim — Amsterdam · KvK 12345678"},
+  },
+};
+
+// ─── Photo component ──────────────────────────────────────────────────────────
+
+function Photo({ tag, idx, coords, depth, height = 360, scene = "water", style, src, noScrim = false }) {
+  const SCENES = {
+    water:     { g:"linear-gradient(180deg,#06152b 0%,#0a1f3d 50%,#1a4475 100%)",      o:"radial-gradient(140% 100% at 80% 100%,rgba(255,255,255,.08),transparent 55%)" },
+    shore:     { g:"linear-gradient(180deg,#f5f3ee 0%,#d8c8a4 60%,#6b6047 100%)",      o:"radial-gradient(120% 80% at 20% 20%,rgba(255,255,255,.18),transparent 60%)" },
+    underwater:{ g:"linear-gradient(180deg,#06121e 0%,#0a2c4a 50%,#1a5878 100%)",      o:"radial-gradient(130% 100% at 50% 0%,rgba(255,255,255,.22),transparent 55%)" },
+    swimmer:   { g:"linear-gradient(180deg,#0a1f3d 0%,#13345e 50%,#2a5a8a 100%)",      o:"radial-gradient(80% 60% at 70% 50%,rgba(6,15,30,.6),transparent 70%)" },
+    gear:      { g:"linear-gradient(180deg,#1a1a1a 0%,#2a2a2a 60%,#404040 100%)",      o:"radial-gradient(60% 60% at 30% 30%,rgba(255,91,31,.25),transparent 60%)" },
+    dawn:      { g:"linear-gradient(180deg,#ff8c4a 0%,#c2603a 35%,#1c4f6e 100%)",      o:"radial-gradient(60% 40% at 70% 30%,rgba(255,216,77,.55),transparent 70%)" },
+  };
+  const s = SCENES[scene] || SCENES.water;
+  return (
+    <div className="photo" style={{ height, ...style }}>
+      {src ? (
+        <>
+          <img src={src} alt="" style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+          {!noScrim && <div style={{ position:"absolute", inset:0, background:"linear-gradient(180deg,rgba(6,15,30,.65) 0%,rgba(6,15,30,.4) 40%,rgba(6,15,30,.85) 100%)" }} />}
+        </>
+      ) : (
+        <>
+          <div className="ph-grad" style={{ background:`${s.o}, ${s.g}` }} />
+          <div className="ph-grain" />
+          {scene !== "gear" && scene !== "shore" && <div className="ph-water" />}
+          {scene === "swimmer" && (
+            <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice"
+              style={{ position:"absolute", inset:0, width:"100%", height:"100%", opacity:.55 }}>
+              <defs>
+                <linearGradient id="armG" x1="0" x2="1">
+                  <stop offset="0" stopColor="#f4ede0" stopOpacity="0" />
+                  <stop offset=".5" stopColor="#f4ede0" stopOpacity=".7" />
+                  <stop offset="1" stopColor="#f4ede0" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="220" cy="170" rx="120" ry="14" fill="url(#armG)" />
+              <path d="M120 165 Q200 120 280 165" stroke="#f4ede0" strokeWidth="2.5" fill="none" opacity=".7" />
+              <circle cx="195" cy="155" r="10" fill="#f4ede0" opacity=".85" />
+              <path d="M205 155 q40 -20 60 -8" stroke="#f4ede0" strokeWidth="3" strokeLinecap="round" fill="none" />
+              <path d="M170 158 Q150 130 130 100" stroke="#f4ede0" strokeWidth="3" strokeLinecap="round" fill="none" opacity=".8" />
+            </svg>
+          )}
+          {scene === "underwater" && (
+            <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice"
+              style={{ position:"absolute", inset:0, width:"100%", opacity:.4, height:"100px" }}>
+              {[...Array(20)].map((_,i) => <circle key={i} cx={20+i*22} cy={40+i%4*45} r={2+i%3} fill="#f4ede0" opacity=".7" />)}
+              <path d="M0 200 Q100 180 200 200 T 400 200" stroke="#f4ede0" strokeWidth="1" fill="none" opacity=".4" />
+              <path d="M0 220 Q100 200 200 220 T 400 220" stroke="#f4ede0" strokeWidth="1" fill="none" opacity=".3" />
+            </svg>
+          )}
+          {scene === "shore" && (
+            <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice"
+              style={{ position:"absolute", inset:0, width:"100%", height:"100%" }}>
+              <rect y="160" width="400" height="80" fill="#1c4f6e" opacity=".6" />
+              <circle cx="50" cy="50" r="22" fill="#ffd84d" opacity=".7" />
+              <path d="M0 165 Q200 150 400 170 L400 240 L0 240 Z" fill="#0b1c2c" opacity=".5" />
+              {[...Array(5)].map((_,i) => <circle key={i} cx={80+i*70} cy={155} r="6" fill="#ff5b1f" />)}
+            </svg>
+          )}
+          {scene === "dawn" && (
+            <svg viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice"
+              style={{ position:"absolute", inset:0, width:"100%", height:"100%" }}>
+              <circle cx="280" cy="100" r="48" fill="#ffd84d" opacity=".9" />
+              <path d="M0 170 Q200 145 400 180 L400 240 L0 240 Z" fill="#0b1c2c" opacity=".55" />
+              <path d="M0 190 Q200 175 400 200 L400 240 L0 240 Z" fill="#0b1c2c" opacity=".4" />
+            </svg>
+          )}
+        </>
+      )}
+      {tag && (
+        <div className="ph-tag" style={{ top:14, left:14 }}>
+          <span className="blink"></span>
+          <span>{tag}</span>
+        </div>
+      )}
+      {idx && (
+        <div className="ph-tag" style={{ top:14, right:14 }}>
+          <span>{idx}</span>
+        </div>
+      )}
+      {(coords || depth) && (
+        <div className="ph-tag" style={{ bottom:14, left:14, fontSize:9 }}>
+          {coords && <span>{coords}</span>}
+          {coords && depth && <span style={{ opacity:.5 }}>·</span>}
+          {depth && <span>{depth}</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Hero variants ────────────────────────────────────────────────────────────
+
+function HeroOverlay({ lang, openSignup }) {
+  const h = T.hero[lang];
+  const c = T.cta[lang];
+  return (
+    <section className="hero-overlay" style={{ backgroundColor:"rgba(6,21,43,0)" }}>
+      <Photo scene="underwater" src="project/assets/hero-swimmers.png" style={{ height:"100%", borderRadius:0 }} />
+      <div className="hero-overlay-inner">
+        <div style={{ maxWidth:920, textShadow:"0 2px 30px rgba(6,15,30,.85), 0 1px 2px rgba(6,15,30,.6)" }}>
+          <div className="mono uc" style={{ fontSize:11, letterSpacing:".18em", color:"rgba(255,255,255,.85)", marginBottom:24 }}>{h.eyebrow}</div>
+          <h1 className="display" style={{ fontSize:"clamp(48px,7vw,108px)", lineHeight:1.02, letterSpacing:"-.025em", maxWidth:"14ch", fontWeight:300 }}>
+            {h.title[0]} {h.title[1]}<span style={{ fontStyle:"italic" }}>{h.title[2]}</span> {h.title[3]} {h.title[4]} {h.title[5]}
+          </h1>
+          <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:36 }}>
+            <button className="btn light" onClick={openSignup}>{c.signup} <span className="arr">→</span></button>
+            <a className="btn ghost" style={{ color:"#fff", borderColor:"rgba(255,255,255,.4)" }} href="#cursussen">{c.learn}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroEditorial({ lang, openSignup }) {
+  const h = T.hero[lang];
+  const c = T.cta[lang];
+  return (
+    <section style={{ padding:"32px 28px 32px" }}>
+      <div style={{ maxWidth:1440, margin:"0 auto", background:"var(--ink)", color:"#fff", borderRadius:2, overflow:"hidden", position:"relative" }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1.05fr 1fr", minHeight:"78vh" }} className="hero-edit-grid">
+          <div style={{ padding:"56px 56px 36px", display:"flex", flexDirection:"column", justifyContent:"space-between", position:"relative", zIndex:2 }}>
+            <div className="mono uc" style={{ fontSize:11, letterSpacing:".16em", color:"rgba(255,255,255,.55)" }}>{h.eyebrow}</div>
+            <div>
+              <h1 className="display" style={{ fontSize:"clamp(48px,5.6vw,80px)", color:"#fff", lineHeight:1.02, letterSpacing:"-.025em", maxWidth:"14ch" }}>
+                {h.title[0]} {h.title[1]}<span style={{ fontStyle:"italic" }}>{h.title[2]}</span> {h.title[3]} {h.title[4]} {h.title[5]}
+              </h1>
+              <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginTop:36 }}>
+                <button className="btn light" onClick={openSignup}>{c.signup} <span className="arr">→</span></button>
+                <a className="btn ghost" style={{ color:"#fff", borderColor:"rgba(255,255,255,.4)" }} href="#cursussen">{c.learn}</a>
+              </div>
+            </div>
+            <div></div>
+          </div>
+          <div style={{ position:"relative", minHeight:480 }}>
+            <Photo scene="underwater" tag="LIVE · IJBURG" idx="01 / 03" coords="52.3589° N · 4.9990° E" depth="WATER 16°C"
+              style={{ position:"absolute", inset:0, height:"100%", borderRadius:0 }} />
+          </div>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr) auto", borderTop:"1px solid rgba(255,255,255,.14)", padding:"22px 56px", gap:32, alignItems:"center" }} className="hero-edit-meta">
+          {h.stat.map((s, i) => (
+            <div key={i} style={{ display:"flex", flexDirection:"column", gap:4 }}>
+              <span className="mono uc" style={{ fontSize:9, letterSpacing:".14em", color:"rgba(255,255,255,.45)" }}>0{i+1}</span>
+              <span style={{ fontSize:14, fontWeight:500, color:"#fff" }}>{s}</span>
+            </div>
+          ))}
+          <div className="mono uc" style={{ fontSize:10, color:"rgba(255,255,255,.6)", letterSpacing:".14em", whiteSpace:"nowrap" }}>{h.seriesStart}</div>
+        </div>
+      </div>
+      <style>{`
+        @media(max-width:880px){
+          .hero-edit-grid{grid-template-columns:1fr !important;}
+          .hero-edit-grid > div:first-child{padding:36px 24px 24px !important;}
+          .hero-edit-grid > div:last-child{min-height:60vh !important;}
+          .hero-edit-meta{grid-template-columns:1fr 1fr !important;padding:18px 24px !important;}
+        }
+      `}</style>
+    </section>
+  );
+}
+
+function HeroMarquee({ lang, openSignup }) {
+  const h = T.hero[lang];
+  const c = T.cta[lang];
+  return (
+    <section className="hero" style={{ paddingTop:32, overflow:"hidden" }}>
+      <div className="shell">
+        <div className="meta" style={{ marginBottom:24 }}>
+          <span className="mono uc" style={{ fontSize:11 }}>{h.eyebrow}</span>
+        </div>
+      </div>
+      <div style={{ whiteSpace:"nowrap", padding:"0 28px" }}>
+        <div className="hero-marquee-words">Open <span style={{ fontStyle:"italic" }}>water</span> coaching</div>
+      </div>
+      <div className="shell" style={{ marginTop:24 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16 }} className="hero-3up">
+          <Photo scene="dawn" tag="MA · KNSM" idx="EVENING" coords="19:00 — 20:00" height={300} />
+          <Photo scene="swimmer" tag="WO · IJBURG" idx="EVENING" coords="19:00 — 20:00" height={300} />
+          <Photo scene="underwater" tag="DO · SLOTERPLAS" idx="EVENING" coords="19:00 — 20:00" height={300} />
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:32, marginTop:36, alignItems:"center" }} className="hero-grid">
+          <p className="serif" style={{ fontSize:"clamp(28px,3.4vw,48px)", lineHeight:1.1, margin:0, fontWeight:400, maxWidth:900 }}>{h.lede}</p>
+          <div style={{ display:"flex", gap:12, flexWrap:"wrap", justifyContent:"flex-end" }}>
+            <button className="btn accent" onClick={openSignup}>{c.signup} <span className="arr">→</span></button>
+            <a className="btn ghost" href="#cursussen">{c.learn}</a>
+          </div>
+        </div>
+      </div>
+      <style>{`@media(max-width:880px){.hero-3up{grid-template-columns:1fr !important;}.hero-grid{grid-template-columns:1fr !important;}}`}</style>
+    </section>
+  );
+}
+
+function HeroSplit({ lang, openSignup }) {
+  const h = T.hero[lang];
+  const c = T.cta[lang];
+  return (
+    <section className="hero" style={{ padding:0 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", minHeight:"88vh" }} className="hero-split">
+        <div style={{ padding:"80px 56px 56px", display:"flex", flexDirection:"column", justifyContent:"space-between", borderRight:"1px solid var(--hairline)" }}>
+          <div className="meta">
+            <span className="mono uc" style={{ fontSize:11 }}>{h.eyebrow}</span>
+          </div>
+          <div>
+            <h1 className="display" style={{ fontSize:"clamp(48px,7vw,118px)" }}>
+              {h.title[0]} {h.title[1]}<span style={{ fontStyle:"italic", color:"var(--accent)" }}>{h.title[2]}</span>.
+            </h1>
+            <p style={{ fontSize:18, lineHeight:1.5, marginTop:24, maxWidth:480 }}>{h.lede}</p>
+          </div>
+          <div>
+            <div style={{ display:"flex", gap:12, flexWrap:"wrap", marginBottom:24 }}>
+              <button className="btn accent" onClick={openSignup}>{c.signup} <span className="arr">→</span></button>
+              <a className="btn ghost" href="#cursussen">{c.learn}</a>
+            </div>
+            <div style={{ display:"flex", gap:24, flexWrap:"wrap", paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
+              {h.stat.map((s,i) => (
+                <div key={i}>
+                  <div className="mono" style={{ fontSize:10, color:"var(--muted)" }}>0{i+1}</div>
+                  <div style={{ fontSize:14, fontWeight:500 }}>{s}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ position:"relative", padding:24, background:"var(--paper-2)" }}>
+          <Photo scene="underwater" tag="LIVE FEED" idx="03 / 03" coords="SLOTERPLAS · 52.3631° N" depth="DEPTH 20m" height="100%" style={{ height:"100%", borderRadius:8 }} />
+        </div>
+      </div>
+      <style>{`@media(max-width:880px){.hero-split{grid-template-columns:1fr !important;}.hero-split > div:first-child{padding:48px 24px !important;border-right:0;border-bottom:1px solid var(--hairline);}.hero-split > div:last-child{min-height:60vh;}}`}</style>
+    </section>
+  );
+}
+
+function Hero({ variant, lang, openSignup }) {
+  if (variant === "overlay")   return <HeroOverlay   lang={lang} openSignup={openSignup} />;
+  if (variant === "marquee")   return <HeroMarquee   lang={lang} openSignup={openSignup} />;
+  if (variant === "split")     return <HeroSplit     lang={lang} openSignup={openSignup} />;
+  return                              <HeroEditorial lang={lang} openSignup={openSignup} />;
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+function MarqueeBand({ lang }) {
+  const words = lang === "nl"
+    ? ["Open water seizoen 2026","KNSM · IJburg · Sloterplas","Coach Michiel","Video-analyse","Vanaf €185","6 trainingen","HBFS-serie","Triatleten welkom","City swim ready","Start eind mei"]
+    : ["Open water 2026","KNSM · IJburg · Sloterplas","Coach Michiel","Video analysis","From €185","6 sessions","HBFS series","Triathletes welcome","City swim ready","Starts late May"];
+  const list = [...words, ...words];
+  return (
+    <div className="marquee" aria-hidden="true">
+      <div className="marquee-track">
+        {list.map((w,i) => (
+          <span key={i}>{w}<span className="star">✦</span></span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Courses({ lang, openSignup }) {
+  const c = T.courses[lang];
+  return (
+    <section id="cursussen" className="shell" style={{ padding:"96px 28px" }}>
+      <div style={{ display:"flex", alignItems:"end", justifyContent:"space-between", marginBottom:48, gap:24, flexWrap:"wrap" }}>
+        <div>
+          <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 02 — {lang==="nl"?"Cursussen":"Courses"}</span>
+          <h2 className="display" style={{ marginTop:10, maxWidth:900 }}>{c.title}</h2>
+        </div>
+        <a href="#schedule" className="underline-link mono uc" style={{ fontSize:11 }}>{c.compare} →</a>
+      </div>
+      <div className="grid-2">
+        {/* BASIS */}
+        <div className="card" style={{ display:"flex", flexDirection:"column", gap:24, padding:0, overflow:"hidden" }}>
+          <Photo src="project/assets/dock-trio.jpg" tag={c.basisTag} idx="€185" coords="6 × 60 MIN" height={280} />
+          <div style={{ padding:"0 28px 28px", display:"flex", flexDirection:"column", gap:20 }}>
+            <div>
+              <h3 className="display" style={{ fontSize:36 }}>{c.basisName}</h3>
+              <p style={{ margin:"12px 0 0", lineHeight:1.5, color:"var(--muted)" }}>{c.basisLede}</p>
+            </div>
+            <ul style={{ listStyle:"none", padding:0, margin:0, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, fontSize:14 }}>
+              {c.basisFeats.map((f,i) => (
+                <li key={i} style={{ display:"flex", gap:8, alignItems:"baseline" }}>
+                  <span className="mono" style={{ fontSize:10, color:"var(--accent)" }}>0{i+1}</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", borderTop:"1px solid var(--hairline)", paddingTop:20 }}>
+              <div>
+                <div className="mono uc" style={{ fontSize:10, color:"var(--muted)" }}>{c.from}</div>
+                <div className="serif" style={{ fontSize:42, lineHeight:1, fontWeight:500 }}>€185</div>
+              </div>
+              <button className="btn accent" onClick={() => openSignup("basis")}>{c.enroll} <span className="arr">→</span></button>
+            </div>
+          </div>
+        </div>
+
+        {/* HBFS */}
+        <div className="card" style={{ display:"flex", flexDirection:"column", gap:24, padding:0, overflow:"hidden", background:"var(--ink)", color:"var(--paper)" }}>
+          <Photo src="project/assets/race.jpg" tag={c.hbfsTag} idx="HBFS" coords={c.hbfsFull} height={280} />
+          <div style={{ padding:"0 28px 28px", display:"flex", flexDirection:"column", gap:20 }}>
+            <div>
+              <h3 className="display" style={{ fontSize:36, color:"var(--paper)" }}>{c.hbfsName}</h3>
+              <p className="mono uc" style={{ fontSize:11, marginTop:6, color:"var(--accent-2)" }}>{c.hbfsFull}</p>
+              <p style={{ margin:"12px 0 0", lineHeight:1.5, opacity:.78 }}>{c.hbfsLede}</p>
+            </div>
+            <ul style={{ listStyle:"none", padding:0, margin:0, display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, fontSize:14 }}>
+              {c.hbfsFeats.map((f,i) => (
+                <li key={i} style={{ display:"flex", gap:8, alignItems:"baseline" }}>
+                  <span className="mono" style={{ fontSize:10, color:"var(--accent-2)" }}>0{i+1}</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", borderTop:"1px solid rgba(244,237,224,.2)", paddingTop:20 }}>
+              <div>
+                <div className="mono uc" style={{ fontSize:10, opacity:.6 }}>{c.from}</div>
+                <div className="serif" style={{ fontSize:42, lineHeight:1, fontWeight:500 }}>€225</div>
+              </div>
+              <button className="btn accent" onClick={() => openSignup("hbfs")}>{c.enroll} <span className="arr">→</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Spec({ label, value }) {
+  return (
+    <div style={{ borderTop:"1px solid var(--hairline)", paddingTop:6 }}>
+      <div className="mono uc" style={{ fontSize:9, color:"var(--muted)" }}>{label}</div>
+      <div style={{ fontWeight:500 }}>{value}</div>
+    </div>
+  );
+}
+
+function Schedule({ lang, openSignup }) {
+  const s = T.schedule[lang];
+  const SRCS = ["project/assets/race.jpg","project/assets/swim-stroke.jpg","project/assets/dock-trio.jpg"];
+  return (
+    <section id="schedule" className="shell" style={{ padding:"96px 28px" }}>
+      <div style={{ display:"flex", alignItems:"end", justifyContent:"space-between", marginBottom:48, gap:24, flexWrap:"wrap" }}>
+        <div style={{ maxWidth:700 }}>
+          <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 03 — {lang==="nl"?"Locaties":"Locations"}</span>
+          <h2 className="display" style={{ marginTop:10 }}>{s.title}</h2>
+          <p style={{ marginTop:18, fontSize:18, lineHeight:1.5, color:"var(--muted)" }}>{s.lede}</p>
+        </div>
+        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+          <span className="pill"><span className="mono">⏱</span> {s.time}</span>
+          <span className="pill solid"><span className="mono">↔</span> {s.switch}</span>
+        </div>
+      </div>
+      <div className="grid-3">
+        {DAYS.map((d,i) => (
+          <div key={d.key} className="day-card">
+            <Photo src={SRCS[i]} tag={(lang==="nl"?d.day_nl:d.day_en).toUpperCase()} idx={`0${i+1} / 03`} coords={d.coords} depth={d.waterTemp} height={220} />
+            <div style={{ padding:24, display:"flex", flexDirection:"column", gap:16, flex:1 }}>
+              <div>
+                <div className="mono uc" style={{ fontSize:11, color:"var(--accent)" }}>{lang==="nl"?d.start:d.start_en}</div>
+                <h3 className="serif" style={{ fontSize:34, lineHeight:1, margin:"6px 0 4px", fontWeight:500, letterSpacing:"-.02em" }}>{d.spot}</h3>
+                <div style={{ fontSize:13, color:"var(--muted)" }}>{d.sub}</div>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, fontSize:12 }}>
+                <Spec label={lang==="nl"?"Afstand":"Distance"} value={d.distance} />
+                <Spec label={lang==="nl"?"Diepte":"Depth"} value={d.depth} />
+              </div>
+              <p style={{ fontSize:14, lineHeight:1.45, margin:0 }}>{lang==="nl"?d.note_nl:d.note_en}</p>
+              <button className="btn ghost" style={{ marginTop:"auto", justifyContent:"center" }} onClick={() => openSignup(null, d.key)}>
+                {s.pickDay} <span className="arr">→</span>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WhoFor({ lang }) {
+  const w = T.whoFor[lang];
+  return (
+    <section className="shell" style={{ padding:"96px 28px" }}>
+      <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 04 — {lang==="nl"?"Voor wie":"Who"}</span>
+      <h2 className="display" style={{ marginTop:10, marginBottom:48, maxWidth:900 }}>{w.title}</h2>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:"var(--hairline)", border:"1px solid var(--hairline)", borderRadius:14, overflow:"hidden" }} className="who-grid">
+        {w.items.map((it,i) => (
+          <div key={i} style={{ padding:32, background:"var(--paper)", display:"flex", flexDirection:"column", gap:14, minHeight:280 }}>
+            <div className="mono" style={{ fontSize:11, color:"var(--accent)", fontWeight:600 }}>{it.k}</div>
+            <h3 className="serif" style={{ fontSize:24, fontWeight:500, lineHeight:1.1, margin:0, letterSpacing:"-.02em" }}>{it.t}</h3>
+            <p style={{ fontSize:14, lineHeight:1.5, margin:0, color:"var(--muted)" }}>{it.b}</p>
+          </div>
+        ))}
+      </div>
+      <style>{`@media(max-width:880px){.who-grid{grid-template-columns:1fr 1fr !important;}} @media(max-width:560px){.who-grid{grid-template-columns:1fr !important;}}`}</style>
+    </section>
+  );
+}
+
+function WhatYouGet({ lang }) {
+  const w = T.whatYouGet[lang];
+  return (
+    <section style={{ padding:"96px 0", background:"var(--ink)", color:"var(--paper)" }}>
+      <div className="shell">
+        <span className="mono uc" style={{ fontSize:11, color:"var(--accent-2)" }}>§ 05 — {lang==="nl"?"Wat zit erin":"What you get"}</span>
+        <h2 className="display" style={{ marginTop:10, marginBottom:48, maxWidth:900, color:"var(--paper)" }}>{w.title}</h2>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:24 }} className="grid-3">
+          {w.items.map((it,i) => (
+            <div key={i} style={{ padding:"24px 0", borderTop:"1px solid rgba(244,237,224,.2)", display:"flex", flexDirection:"column", gap:10 }}>
+              <div style={{ display:"flex", alignItems:"baseline", justifyContent:"space-between" }}>
+                <span className="mono" style={{ fontSize:11, color:"var(--accent-2)" }}>{it.k}</span>
+                <span className="mono uc" style={{ fontSize:9, opacity:.5 }}>INCL.</span>
+              </div>
+              <h3 className="serif" style={{ fontSize:26, fontWeight:500, lineHeight:1.05, margin:0, letterSpacing:"-.02em", color:"var(--paper)" }}>{it.t}</h3>
+              <p style={{ fontSize:14, lineHeight:1.5, margin:0, opacity:.78 }}>{it.b}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Coach({ lang }) {
+  const c = T.coach[lang];
+  return (
+    <section id="coach" className="shell" style={{ padding:"96px 28px" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1.2fr", gap:64, alignItems:"start" }} className="coach-grid">
+        <div style={{ position:"sticky", top:80 }}>
+          <Photo src="project/assets/coach-back.jpg" tag={c.label} idx="MICHIEL" coords="AMSTERDAM · 2016 — NU" height={620} />
+        </div>
+        <div>
+          <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 06 — {c.label}</span>
+          <h2 className="display" style={{ marginTop:10, marginBottom:32 }}>{c.title}</h2>
+          {c.bio.map((p,i) => (
+            <p key={i} style={{ fontSize:18, lineHeight:1.55, margin:"0 0 18px" }}>{p}</p>
+          ))}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:0, marginTop:36, borderTop:"1px solid var(--hairline)" }} className="coach-stats">
+            {c.stats.map((s,i) => (
+              <div key={i} style={{ padding:"20px 0", borderRight:i<3?"1px solid var(--hairline)":"none", paddingLeft:i>0?20:0 }}>
+                <div className="serif" style={{ fontSize:46, fontWeight:500, lineHeight:1, letterSpacing:"-.03em" }}>{s.v}</div>
+                <div className="mono uc" style={{ fontSize:10, color:"var(--muted)", marginTop:8 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <style>{`@media(max-width:880px){.coach-grid{grid-template-columns:1fr !important;}.coach-grid > div:first-child{position:static !important;}.coach-stats{grid-template-columns:1fr 1fr !important;}}`}</style>
+    </section>
+  );
+}
+
+function Testimonials({ lang }) {
+  const items = T.testimonials[lang];
+  return (
+    <section className="shell" style={{ padding:"96px 28px" }}>
+      <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 07 — {lang==="nl"?"Stemmen uit het water":"Voices from the water"}</span>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginTop:32 }} className="grid-2">
+        {items.map((t,i) => (
+          <div key={i} className="card" style={{ display:"flex", flexDirection:"column", gap:20, minHeight:240 }}>
+            <div className="mono" style={{ fontSize:24, color:"var(--accent)", lineHeight:1 }}>"</div>
+            <p className="serif" style={{ fontSize:24, lineHeight:1.25, margin:0, fontWeight:400, letterSpacing:"-.01em", flex:1 }}>{t.q}</p>
+            <div style={{ display:"flex", alignItems:"center", gap:12, paddingTop:16, borderTop:"1px solid var(--hairline)" }}>
+              <div style={{ width:36, height:36, borderRadius:"50%", background:"var(--ink)", color:"var(--paper)", display:"grid", placeItems:"center", fontWeight:600, fontSize:14 }}>{t.n[0]}</div>
+              <div>
+                <div style={{ fontWeight:600, fontSize:14 }}>{t.n}</div>
+                <div className="mono uc" style={{ fontSize:10, color:"var(--muted)" }}>{t.r}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FAQ({ lang }) {
+  const items = T.faq[lang];
+  const [open, setOpen] = React.useState(0);
+  return (
+    <section id="faq" className="shell" style={{ padding:"96px 28px 120px" }}>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1.4fr", gap:64 }} className="faq-grid">
+        <div>
+          <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>§ 08 — FAQ</span>
+          <h2 className="display" style={{ marginTop:10 }}>{lang==="nl"?"Vragen,\nantwoorden.":"Questions,\nanswers."}</h2>
+        </div>
+        <div>
+          {items.map((it,i) => (
+            <div key={i} style={{ borderTop:"1px solid var(--hairline)", borderBottom:i===items.length-1?"1px solid var(--hairline)":"none" }}>
+              <button onClick={() => setOpen(open===i?-1:i)}
+                style={{ width:"100%", textAlign:"left", background:"none", border:0, padding:"22px 0", display:"flex", alignItems:"center", justifyContent:"space-between", cursor:"pointer", color:"var(--ink)", font:"inherit" }}>
+                <span style={{ fontSize:20, fontWeight:500, letterSpacing:"-.01em" }}>{it.q}</span>
+                <span className="mono" style={{ fontSize:18, color:"var(--accent)", transition:"transform .2s ease", transform:open===i?"rotate(45deg)":"none" }}>+</span>
+              </button>
+              {open===i && (
+                <div style={{ paddingBottom:22, fontSize:16, lineHeight:1.6, color:"var(--muted)", maxWidth:680 }}>{it.a}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <style>{`@media(max-width:880px){.faq-grid{grid-template-columns:1fr !important;}}`}</style>
+    </section>
+  );
+}
+
+function Footer({ lang, openSignup }) {
+  const f = T.footer[lang];
+  const c = T.cta[lang];
+  return (
+    <footer style={{ background:"var(--ink)", color:"var(--paper)", padding:"80px 0 32px" }}>
+      <div className="shell">
+        <div style={{ display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:48, paddingBottom:48, borderBottom:"1px solid rgba(244,237,224,.18)" }} className="grid-2">
+          <h2 className="display" style={{ color:"var(--paper)", fontSize:"clamp(40px,5vw,84px)" }}>
+            {lang==="nl"?"Klaar om buiten te zwemmen?":"Ready to swim outside?"}
+          </h2>
+          <div style={{ display:"flex", flexDirection:"column", gap:16, alignItems:"flex-start", justifyContent:"end" }}>
+            <button className="btn accent" onClick={() => openSignup()}>{c.signup} <span className="arr">→</span></button>
+            <a href="mailto:hello@topswim.nl" className="underline-link" style={{ color:"var(--paper)", fontSize:14 }}>hello@topswim.nl</a>
+            <a href="https://wa.me/31600000000" className="underline-link" style={{ color:"var(--paper)", fontSize:14 }}>WhatsApp · +31 6 00 000 000</a>
+          </div>
+        </div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", paddingTop:24, opacity:.6, fontSize:12, flexWrap:"wrap", gap:12 }} className="mono uc">
+          <span>{f.made}</span>
+          <span>{f.tag}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Signup modal ─────────────────────────────────────────────────────────────
+
+function Row({ k, v }) {
+  return (
+    <div style={{ display:"flex", justifyContent:"space-between", gap:16, fontSize:14 }}>
+      <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>{k}</span>
+      <span style={{ fontWeight:500, textAlign:"right" }}>{v || "—"}</span>
+    </div>
+  );
+}
+
+function Signup({ lang, initialSerie, initialDay, onClose }) {
+  const s = T.signup[lang];
+  const cc = T.courses[lang];
+  const [step, setStep] = React.useState(0);
+  const [data, setData] = React.useState({
+    serie: initialSerie || null,
+    day: initialDay || null,
+    name:"", email:"", phone:"", level:s.levels[0], goals:"",
+    consent:false,
+  });
+  const [done, setDone] = React.useState(false);
+
+  const update = (k,v) => setData(d => ({...d, [k]:v}));
+  const dayObj = data.day ? DAYS.find(d => d.key===data.day) : null;
+  const price = data.serie === "hbfs" ? 225 : 185;
+  const serieName = data.serie==="hbfs" ? cc.hbfsName : cc.basisName;
+
+  const canNext = (() => {
+    if (step===0) return !!data.serie;
+    if (step===1) return !!data.day;
+    if (step===2) return data.name && /\S+@\S+\.\S+/.test(data.email);
+    return data.consent;
+  })();
+
+  const onSubmit = (e) => {
+    e?.preventDefault();
+    if (step < 3) { if (canNext) setStep(step+1); return; }
+    if (canNext) setDone(true);
+  };
+
+  React.useEffect(() => {
+    const k = (e) => { if (e.key==="Escape") onClose(); };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, [onClose]);
+
+  if (done) {
+    return (
+      <div className="modal-back" onClick={onClose}>
+        <div className="modal" onClick={e => e.stopPropagation()} style={{ padding:48, alignItems:"center", textAlign:"center" }}>
+          <div style={{ width:64, height:64, borderRadius:"50%", background:"var(--accent)", display:"grid", placeItems:"center", margin:"0 auto 24px" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12l5 5 9-11" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h2 className="display" style={{ fontSize:48, marginBottom:16 }}>{s.done}</h2>
+          <p style={{ fontSize:17, lineHeight:1.5, color:"var(--muted)", maxWidth:480, margin:"0 auto 32px" }}>{s.doneSub}</p>
+          <button className="btn" onClick={onClose}>{s.doneClose}</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="modal-back" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div style={{ padding:"22px 28px 18px", borderBottom:"1px solid var(--hairline)", display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:16, flex:1, minWidth:0 }}>
+            <span className="mono uc" style={{ fontSize:11, color:"var(--muted)", flex:"none" }}>{s.step} {step+1} / {s.steps.length}</span>
+            <div style={{ flex:1, height:3, background:"var(--hairline)", borderRadius:2, position:"relative", overflow:"hidden" }}>
+              <div style={{ position:"absolute", inset:0, width:`${((step+1)/s.steps.length)*100}%`, background:"var(--accent)", transition:"width .3s ease" }} />
+            </div>
+          </div>
+          <button onClick={onClose} aria-label={s.close} style={{ background:"none", border:0, cursor:"pointer", fontSize:18, padding:8, color:"var(--ink)" }}>✕</button>
+        </div>
+
+        <form onSubmit={onSubmit} style={{ padding:"32px 28px 28px", display:"flex", flexDirection:"column", gap:24, overflowY:"auto", flex:1 }}>
+          <div>
+            <h3 className="display" style={{ fontSize:36, marginBottom:6 }}>{s.steps[step].t}</h3>
+            <p style={{ margin:0, color:"var(--muted)", fontSize:15 }}>{s.steps[step].s}</p>
+          </div>
+
+          {step===0 && (
+            <div style={{ display:"grid", gap:12 }}>
+              <button type="button" className={"opt"+(data.serie==="basis"?" on":"")} onClick={() => update("serie","basis")}>
+                <span className="opt-bullet"/>
+                <span style={{ flex:1 }}>
+                  <span className="mono uc" style={{ fontSize:10, color:"var(--accent)" }}>{cc.basisTag}</span>
+                  <span style={{ display:"block", fontSize:22, fontWeight:600, marginTop:4 }}>{cc.basisName} — €185</span>
+                  <span style={{ display:"block", fontSize:13, color:"var(--muted)", marginTop:4 }}>{cc.basisLede}</span>
+                </span>
+              </button>
+              <button type="button" className={"opt"+(data.serie==="hbfs"?" on":"")} onClick={() => update("serie","hbfs")}>
+                <span className="opt-bullet"/>
+                <span style={{ flex:1 }}>
+                  <span className="mono uc" style={{ fontSize:10, color:"var(--accent)" }}>{cc.hbfsTag}</span>
+                  <span style={{ display:"block", fontSize:22, fontWeight:600, marginTop:4 }}>{cc.hbfsName} — €225</span>
+                  <span style={{ display:"block", fontSize:13, color:"var(--muted)", marginTop:4 }}>{cc.hbfsLede}</span>
+                </span>
+              </button>
+            </div>
+          )}
+
+          {step===1 && (
+            <div style={{ display:"grid", gap:10 }}>
+              {DAYS.map(d => (
+                <button key={d.key} type="button" className={"opt"+(data.day===d.key?" on":"")} onClick={() => update("day",d.key)}>
+                  <span className="opt-bullet"/>
+                  <span style={{ flex:1 }}>
+                    <span className="mono uc" style={{ fontSize:10, color:"var(--accent)" }}>{(lang==="nl"?d.day_nl:d.day_en).toUpperCase()} · 19:00</span>
+                    <span style={{ display:"block", fontSize:20, fontWeight:600, marginTop:4 }}>{d.spot}</span>
+                    <span style={{ display:"block", fontSize:13, color:"var(--muted)", marginTop:2 }}>{d.sub} · {lang==="nl"?d.start:d.start_en}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {step===2 && (
+            <div style={{ display:"grid", gap:18 }}>
+              <div>
+                <label className="fl">{s.nameLbl}</label>
+                <input className="input" required value={data.name} onChange={e => update("name",e.target.value)} placeholder={lang==="nl"?"Voor- en achternaam":"First and last name"} />
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }} className="signup-grid-2">
+                <div>
+                  <label className="fl">{s.emailLbl}</label>
+                  <input type="email" className="input" required value={data.email} onChange={e => update("email",e.target.value)} placeholder="naam@email.nl" />
+                </div>
+                <div>
+                  <label className="fl">{s.phoneLbl}</label>
+                  <input className="input" value={data.phone} onChange={e => update("phone",e.target.value)} placeholder="+31 6 …" />
+                </div>
+              </div>
+              <div>
+                <label className="fl">{s.levelLbl}</label>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8, marginTop:8 }} className="signup-levels">
+                  {s.levels.map(l => (
+                    <button key={l} type="button"
+                      onClick={() => update("level",l)}
+                      style={{ padding:"10px 14px", borderRadius:999, border:"1px solid var(--hairline)", background:data.level===l?"var(--ink)":"transparent", color:data.level===l?"var(--paper)":"var(--ink)", cursor:"pointer", font:"500 13px/1 'Inter',sans-serif" }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="fl">{s.goalsLbl}</label>
+                <textarea className="input" rows={2} value={data.goals} onChange={e => update("goals",e.target.value)} placeholder={s.goalsPh} style={{ resize:"none", paddingTop:6 }} />
+              </div>
+            </div>
+          )}
+
+          {step===3 && (
+            <div className="card" style={{ display:"flex", flexDirection:"column", gap:14 }}>
+              <Row k={s.reviewSerie} v={`${serieName} — €${price}`} />
+              {dayObj && <Row k={s.reviewDay} v={lang==="nl"?dayObj.day_nl:dayObj.day_en} />}
+              {dayObj && <Row k={s.reviewLoc} v={`${dayObj.spot} · ${dayObj.sub}`} />}
+              {dayObj && <Row k={s.reviewStart} v={lang==="nl"?dayObj.start:dayObj.start_en} />}
+              <Row k={s.nameLbl} v={data.name} />
+              <Row k={s.emailLbl} v={data.email} />
+              <div style={{ display:"flex", justifyContent:"space-between", paddingTop:14, borderTop:"1px solid var(--hairline)" }}>
+                <span className="mono uc" style={{ fontSize:11, color:"var(--muted)" }}>{s.total}</span>
+                <span className="serif" style={{ fontSize:32, fontWeight:500, lineHeight:1, letterSpacing:"-.02em" }}>€{price}</span>
+              </div>
+              <label style={{ display:"flex", gap:10, alignItems:"flex-start", marginTop:8, cursor:"pointer" }}>
+                <input type="checkbox" checked={data.consent} onChange={e => update("consent",e.target.checked)} style={{ marginTop:3, accentColor:"var(--accent)", width:16, height:16 }} />
+                <span style={{ fontSize:13, color:"var(--muted)", lineHeight:1.4 }}>{s.consent}</span>
+              </label>
+            </div>
+          )}
+        </form>
+
+        <div style={{ padding:"18px 28px", borderTop:"1px solid var(--hairline)", display:"flex", justifyContent:"space-between", alignItems:"center", gap:12 }}>
+          <button onClick={() => setStep(Math.max(0,step-1))} disabled={step===0} className="btn ghost"
+            style={{ opacity:step===0?.35:1, cursor:step===0?"default":"pointer" }}>← {s.back}</button>
+          <button onClick={onSubmit} disabled={!canNext} className="btn accent"
+            style={{ opacity:canNext?1:.4, cursor:canNext?"pointer":"not-allowed" }}>
+            {step<3 ? s.next : s.submit} <span className="arr">→</span>
+          </button>
+        </div>
+      </div>
+      <style>{`
+        @media(max-width:880px){
+          .signup-grid-2{grid-template-columns:1fr !important;}
+          .signup-levels{grid-template-columns:1fr !important;}
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ─── App ──────────────────────────────────────────────────────────────────────
+
+const TWEAK_DEFAULTS = { heroVariant:"overlay", palette:"midnight", lang:"nl" };
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [lang, setLang] = React.useState(t.lang || "nl");
+  const [signup, setSignup] = React.useState(null);
+
+  React.useEffect(() => { applyPalette(t.palette); }, [t.palette]);
+
+  const openSignup = (serie=null, day=null) => setSignup({ serie, day });
+  const closeSignup = () => setSignup(null);
+
+  const c = T.cta[lang];
+  const navItems = T.nav[lang];
+
+  return (
+    <div>
+      {/* TOPBAR */}
+      <header className="topbar">
+        <div className="shell topbar-inner">
+          <a href="#top" className="brand" style={{ textDecoration:"none", color:"var(--ink)" }}>
+            <span className="brand-mark"></span>
+            <span className="brand-name">topswim<span style={{ color:"var(--accent)" }}>.</span></span>
+          </a>
+          <nav className="nav">
+            <a href="#cursussen">{navItems[0]}</a>
+            <a href="#schedule">{navItems[1]}</a>
+            <a href="#coach">{navItems[2]}</a>
+            <a href="#faq">{navItems[3]}</a>
+            <span className="lang" role="group" aria-label="language">
+              <button className={lang==="nl"?"on":""} onClick={() => setLang("nl")}>NL</button>
+              <button className={lang==="en"?"on":""} onClick={() => setLang("en")}>EN</button>
+            </span>
+            <button className="btn accent" style={{ padding:"10px 18px" }} onClick={() => openSignup()}>{c.signup}</button>
+          </nav>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <Hero variant={t.heroVariant} lang={lang} openSignup={openSignup} />
+
+      {/* MARQUEE */}
+      <MarqueeBand lang={lang} />
+
+      {/* COURSES */}
+      <Courses lang={lang} openSignup={openSignup} />
+
+      {/* SCHEDULE */}
+      <div style={{ borderTop:"1px solid var(--hairline)" }}>
+        <Schedule lang={lang} openSignup={openSignup} />
+      </div>
+
+      {/* WHO FOR */}
+      <div style={{ borderTop:"1px solid var(--hairline)" }}>
+        <WhoFor lang={lang} />
+      </div>
+
+      {/* WHAT YOU GET */}
+      <WhatYouGet lang={lang} />
+
+      {/* COACH */}
+      <Coach lang={lang} />
+
+      {/* TESTIMONIALS */}
+      <div style={{ borderTop:"1px solid var(--hairline)" }}>
+        <Testimonials lang={lang} />
+      </div>
+
+      {/* FAQ */}
+      <div style={{ borderTop:"1px solid var(--hairline)" }}>
+        <FAQ lang={lang} />
+      </div>
+
+      {/* FOOTER */}
+      <Footer lang={lang} openSignup={openSignup} />
+
+      {/* SIGNUP MODAL */}
+      {signup && <Signup lang={lang} initialSerie={signup.serie} initialDay={signup.day} onClose={closeSignup} />}
+
+      {/* TWEAKS */}
+      <TweaksPanel>
+        <TweakSection label="Hero" />
+        <TweakSelect label="Variant" value={t.heroVariant}
+          options={[
+            { value:"overlay",   label:"Overlay (foto + titel)" },
+            { value:"editorial", label:"Editorial (split + meta)" },
+            { value:"marquee",   label:"Marquee (big type)" },
+            { value:"split",     label:"Split (50/50)" },
+          ]}
+          onChange={(v) => setTweak("heroVariant", v)} />
+        <TweakSection label="Palet" />
+        <TweakSelect label="Kleurschema" value={t.palette}
+          options={[
+            { value:"midnight", label:"Midnight Water" },
+            { value:"dawn",     label:"Dawn" },
+            { value:"buoy",     label:"Buoy Yellow" },
+          ]}
+          onChange={(v) => setTweak("palette", v)} />
+        <TweakSection label="Taal" />
+        <TweakRadio label="Taal" value={lang}
+          options={["nl","en"]}
+          onChange={(v) => { setLang(v); setTweak("lang", v); }} />
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
